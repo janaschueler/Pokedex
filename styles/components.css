@@ -1,11 +1,11 @@
-#topBtn {
+#myBtn {
   display: none;
   position: fixed;
   bottom: 120px;
-  right: 20px; /* Place the button 30px from the right */
+  right: 20px;
   cursor: pointer;
-  background-image: url("./assets/icons/arrow-up-solid.svg");
-  background-color: rgba(7, 36, 46, 0.1);
+  background-image: url("../assets/icons/arrow-up-solid.svg");
+  background-color: rgba(17, 80, 102);
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: center;
@@ -17,6 +17,27 @@
   padding: 16px 16px;
 }
 
-#topBtn:hover {
+#myBtn:hover {
   background-color: rgba(7, 36, 46, 0.6);
+}
+
+#loadMoreBtn {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background-color: rgba(17, 80, 102);
+  background-size: 60%;
+  border: none;
+  height: 60px;
+  width: 120px;
+  border-radius: 8px;
+  padding: 0;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s;
+  scroll-behavior: smooth;
 }

@@ -1,5 +1,6 @@
-@media only screen and (max-width: 1050px) {
-  h1 {
-    font-size: 28px;
+@media only screen and (min-width: 900px) {
+  .row-cols-md-3 > * {
+    flex: 0 0 auto;
+    width: 20%;
   }
 }
