@@ -26,8 +26,6 @@ async function onloadFunc() {
 
   hideLoadingMessage();
   enableLoadMoreButton();
-
-  setupLoadMoreButton();
 }
 
 function showLoadingMessage() {
@@ -56,16 +54,10 @@ async function loadEvolutionChains() {
       const speciesData = await getPokemonDetails(evo.species.url);
       return await getEvoChainDetails(speciesData.evolution_chain.url);
     } catch (error) {
-      console.error("Fehler beim Abrufen der Evolution Chain:", error);
       return [];
     }
   });
   pokemonEvo = await Promise.all(evoPromises);
-}
-
-function setupLoadMoreButton() {
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-  loadMoreBtn.addEventListener("click", loadMoreCards);
 }
 
 async function getAllPokemon() {
@@ -133,19 +125,34 @@ function openModal(index) {
   }
 
   renderModal(index, pokemon, backgroundColor, typeIconsHTML);
+
   let modal = new bootstrap.Modal(document.getElementById("modalContainer"));
+  let modalElement = document.getElementById("modalContainer");
+
+  modalElement.removeAttribute("aria-hidden");
+
   modal.show();
 }
 
+document.getElementById("modalContainer").addEventListener("hidden.bs.modal", function () {
+  this.setAttribute("aria-hidden", "true");
+});
+
 function renderModal(index, pokemon, backgroundColor, typeIconsHTML) {
   let myModalRef = document.getElementById("pokemonModalBody");
+
+  if (!myModalRef) {
+    console.error("Element 'pokemonModalBody' wurde nicht gefunden!");
+    return;
+  }
+
   myModalRef.innerHTML = "";
 
   let abilityList = renderAbilities(pokemon);
 
   myModalRef.innerHTML += getModal(pokemon, backgroundColor, abilityList, index);
   renderAbilities(pokemon);
-  renderstats(pokemon);
+  renderStats(pokemon);
   renderEvo(index);
 }
 
@@ -158,7 +165,7 @@ function renderAbilities(pokemon) {
   return abilitiesPokemon.slice(0, -2);
 }
 
-function renderstats(pokemon) {
+function renderStats(pokemon) {
   let myStatsRef = document.getElementById("statsContainer");
   myStatsRef.innerHTML = "";
   let statsPokemon = "";
@@ -205,11 +212,6 @@ function loadMoreCards() {
   enableLoadMoreButton();
 }
 
-document.getElementById("searchForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  searchPokemon();
-});
-
 function disableLoadMoreButton() {
   const loadMoreBtn = document.getElementById("loadMoreBtn");
   loadMoreBtn.disabled = true;
@@ -226,8 +228,9 @@ document.getElementById("searchForm").addEventListener("submit", function (e) {
   const searchInput = document.getElementById("searchInput");
   const searchMessageContainer = document.getElementById("searchMessageContainer");
 
+  e.preventDefault();
+
   if (searchInput.value.length < 3) {
-    e.preventDefault();
     searchMessageContainer.style.display = "block";
   } else {
     searchMessageContainer.style.display = "none";
@@ -235,11 +238,19 @@ document.getElementById("searchForm").addEventListener("submit", function (e) {
   }
 });
 
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchInput = document.getElementById("searchInput");
+
+  if (searchInput.value === "") {
+    resetSearch();
+  }
+});
+
 function searchPokemon(query) {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = "";
 
-  const filteredPokemon = pokemonMain.filter((pokemon) => pokemon.name.toLowerCase().includes(query.toLowerCase()));
+  const filteredPokemon = pokemonMain.filter((pokemon) => pokemon.name && pokemon.name.toLowerCase().includes(query.toLowerCase()));
 
   if (filteredPokemon.length > 0) {
     filteredPokemon.forEach((pokemon, index) => {
@@ -249,15 +260,9 @@ function searchPokemon(query) {
       cardContainer.innerHTML += getCard(index, pokemon, backgroundColor, typeIconsHTML, modalId);
     });
   } else {
-    cardContainer.innerHTML = `<p class="text-center">No Pokémon found matching "${query}"</p>`;
+    cardContainer.innerHTML = getSearchError(query);
   }
 }
-
-document.getElementById("searchInput").addEventListener("input", function (event) {
-  if (event.target.value === "") {
-    resetSearch();
-  }
-});
 
 function resetSearch() {
   const cardContainer = document.getElementById("cardContainer");
@@ -289,6 +294,6 @@ function updateModalContent(pokemon, backgroundColor, abilityList, index) {
   const modalContainer = document.getElementById("pokemonModalBody");
   modalContainer.innerHTML = modalBody;
 
-  renderstats(pokemon);
+  renderStats(pokemon);
   renderEvo(index);
 }

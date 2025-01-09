@@ -1,4 +1,3 @@
-// Get the scroll button:
 let mybutton = document.getElementById("myBtn");
 
 window.onscroll = function () {

@@ -1,4 +1,9 @@
-function getCard(indexPokemonMain, pokemonList, backgroundColor, typeIconsHTML) {
+function getCard(
+  indexPokemonMain,
+  pokemonList,
+  backgroundColor,
+  typeIconsHTML
+) {
   return `
     <div class="col" onclick="openModal(${indexPokemonMain})">
       <div class="card h-100">
@@ -30,11 +35,17 @@ function getModal(pokemon, backgroundColor, abilityList, index) {
           </button>
         </div>
         <div class="modal-body d-flex justify-content-center align-items-center position-relative" style="background-color:${backgroundColor}">
-          <button class="btn btn-light position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%);" id="prevButton" onclick="navigatePokemon(${index - 1})" ${index === 0 ? "disabled" : ""}>
+          <button class="btn btn-light position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%);" id="prevButton" onclick="navigatePokemon(${
+            index - 1
+          })" ${index === 0 ? "disabled" : ""}>
             <i class="bi bi-chevron-left"></i>
           </button>
-          <img src="${pokemon.sprites.other.home.front_default}" class="card-img-top" alt="..." />
-          <button class="btn btn-light position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);" id="nextButton" onclick="navigatePokemon(${index + 1})" ${index === pokemonMain.length - 1 ? "disabled" : ""}>
+          <img src="${
+            pokemon.sprites.other.home.front_default
+          }" class="card-img-top" alt="..." />
+          <button class="btn btn-light position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);" id="nextButton" onclick="navigatePokemon(${
+            index + 1
+          })" ${index === pokemonMain.length - 1 ? "disabled" : ""}>
             <i class="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -75,7 +86,7 @@ function getModal(pokemon, backgroundColor, abilityList, index) {
             </ul>
           </div>
           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-            <div class="d-flex justify-content-center align-items-center mt-3">
+            <div class="d-flex justify-content-center align-items-center mt-3 ">
               <div class="mx-2 text-center">
                 <div class="row justify-content-center" id="evoContainer"></div>
               </div>
@@ -92,7 +103,7 @@ function getStats(statsName, statsValue) {
     <li class="list-group-item">
       <div class="d-flex justify-content-between align-items-center">
         <span style="margin-right: 8px;">${statsName}</span>
-        <div class="progress" style="width: 70%; height: 20px">
+        <div class="progress">
           <div class="progress-bar" role="progressbar" style="width: ${statsValue}%;"
                aria-valuenow="${statsValue}" aria-valuemin="0" aria-valuemax="100">
             ${statsValue}
@@ -109,5 +120,13 @@ function getEvo(evoName, evoImgUrl) {
       <img src="${evoImgUrl}" class="img-fluid" alt="${evoName}" />
       <figcaption style="color: white; font-size: 1.2rem;">${evoName}</figcaption>
     </div>
+  `;
+}
+
+function getSearchError(query) {
+  return `
+    <div class="d-flex justify-content-center" style="margin-top: 80px;">
+  <p class="text-white text-center">Es wurden keine Pokémon gefunden, die zu deiner Suche nach „${query}“ passen.</p>
+</div>
   `;
 }

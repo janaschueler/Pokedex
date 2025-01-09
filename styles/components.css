@@ -14,6 +14,7 @@
   width: 24px;
   border-radius: 50%;
   object-fit: cover;
+  z-index: 9999;
   padding: 16px 16px;
 }
 
