@@ -133,9 +133,8 @@ footer {
 }
 
 .containerList {
-  width: 90%;
+  width: 95%;
   margin-inline: auto;
-  padding-inline: clamp(8px, 0, 1400px);
   padding-bottom: 120px;
 }
 

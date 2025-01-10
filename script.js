@@ -105,6 +105,7 @@ function renderCards() {
     let backgroundColor = typeColors[pokemonList.types[0].type.name];
     let typeIconsHTML = generateTypeIconsHTML(pokemonList, backgroundColor);
     const modalId = `pokemonModal_${index + currentIndex - cardsPerLoad}`;
+
     myCardRef.innerHTML += getCard(index + currentIndex - cardsPerLoad, pokemonList, backgroundColor, typeIconsHTML, modalId);
   });
 }
@@ -135,7 +136,13 @@ function openModal(index) {
 }
 
 document.getElementById("modalContainer").addEventListener("hidden.bs.modal", function () {
+  this.setAttribute("inert", "");
   this.setAttribute("aria-hidden", "true");
+});
+
+document.getElementById("modalContainer").addEventListener("shown.bs.modal", function () {
+  this.removeAttribute("inert");
+  this.removeAttribute("aria-hidden");
 });
 
 function renderModal(index, pokemon, backgroundColor, typeIconsHTML) {
@@ -253,11 +260,16 @@ function searchPokemon(query) {
   const filteredPokemon = pokemonMain.filter((pokemon) => pokemon.name && pokemon.name.toLowerCase().includes(query.toLowerCase()));
 
   if (filteredPokemon.length > 0) {
-    filteredPokemon.forEach((pokemon, index) => {
+    filteredPokemon.forEach((pokemon) => {
+      // Ermittle den tatsächlichen Index in der Hauptliste (pokemonMain)
+      const indexInMain = pokemonMain.findIndex((p) => p.name === pokemon.name);
+
       const backgroundColor = typeColors[pokemon.types[0].type.name];
       const typeIconsHTML = pokemon.types.map((type) => getIcon(backgroundColor, typeIcons[type.type.name])).join("");
-      const modalId = `pokemonModal_${index}`;
-      cardContainer.innerHTML += getCard(index, pokemon, backgroundColor, typeIconsHTML, modalId);
+      const modalId = `pokemonModal_${indexInMain}`;
+
+      // Übergib den tatsächlichen Index aus pokemonMain an getCard
+      cardContainer.innerHTML += getCard(indexInMain, pokemon, backgroundColor, typeIconsHTML, modalId);
     });
   } else {
     cardContainer.innerHTML = getSearchError(query);
