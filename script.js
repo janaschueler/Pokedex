@@ -10,8 +10,8 @@ let pokemonEvo = [];
 let pokemonList = [];
 let detailedpokemonMain = [];
 let evoChain = [];
-
-const BASE_URL = "https://pokeapi.co/api/v2/pokemon?limit=500&offset=0";
+let offset = 0;
+const limit = 20;
 
 async function onloadFunc() {
   showLoadingMessage();
@@ -61,12 +61,15 @@ async function loadEvolutionChains() {
 }
 
 async function getAllPokemon() {
-  let response = await fetch(BASE_URL);
+  const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
+  offset += limit;
+
   try {
-    let responseToJson = await response.json();
+    const response = await fetch(url);
+    const responseToJson = await response.json();
     return responseToJson.results;
   } catch (error) {
-    console.error("Fehler beim Parsen der Antwort:", error);
+    console.error("Fehler beim Abrufen der Pokémon-Liste:", error);
     return [];
   }
 }
@@ -135,14 +138,19 @@ function openModal(index) {
   modal.show();
 }
 
-document.getElementById("modalContainer").addEventListener("hidden.bs.modal", function () {
-  this.setAttribute("inert", "");
-  this.setAttribute("aria-hidden", "true");
+document.getElementById("modalContainer").addEventListener("shown.bs.modal", function () {
+  this.removeAttribute("aria-hidden");
+  this.removeAttribute("inert");
+
+  const firstFocusable = this.querySelector("button");
+  if (firstFocusable) {
+    firstFocusable.focus();
+  }
 });
 
-document.getElementById("modalContainer").addEventListener("shown.bs.modal", function () {
-  this.removeAttribute("inert");
-  this.removeAttribute("aria-hidden");
+document.getElementById("modalContainer").addEventListener("hidden.bs.modal", function () {
+  this.setAttribute("aria-hidden", "true");
+  this.setAttribute("inert", "");
 });
 
 function renderModal(index, pokemon, backgroundColor, typeIconsHTML) {
@@ -204,18 +212,13 @@ function renderEvo(index) {
   }
 }
 
-function loadMoreCards() {
+async function loadMoreCards() {
+  console.log("Mehr laden geklickt");
   disableLoadMoreButton();
-
-  let pokemonToLoad = pokemonMain.slice(currentIndex, currentIndex + cardsPerLoad);
-  renderCards(pokemonToLoad);
-  currentIndex += cardsPerLoad;
-
-  const lastCard = document.querySelector("#cardContainer").lastElementChild;
-  if (lastCard) {
-    lastCard.scrollIntoView({ behavior: "smooth", block: "end" });
-  }
-
+  await loadPokemonList();
+  await loadPokemonDetails();
+  await loadEvolutionChains();
+  renderCards();
   enableLoadMoreButton();
 }
 
@@ -261,14 +264,12 @@ function searchPokemon(query) {
 
   if (filteredPokemon.length > 0) {
     filteredPokemon.forEach((pokemon) => {
-      // Ermittle den tatsächlichen Index in der Hauptliste (pokemonMain)
       const indexInMain = pokemonMain.findIndex((p) => p.name === pokemon.name);
 
       const backgroundColor = typeColors[pokemon.types[0].type.name];
       const typeIconsHTML = pokemon.types.map((type) => getIcon(backgroundColor, typeIcons[type.type.name])).join("");
       const modalId = `pokemonModal_${indexInMain}`;
 
-      // Übergib den tatsächlichen Index aus pokemonMain an getCard
       cardContainer.innerHTML += getCard(indexInMain, pokemon, backgroundColor, typeIconsHTML, modalId);
     });
   } else {
